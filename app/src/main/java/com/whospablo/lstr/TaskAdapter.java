@@ -21,14 +21,14 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
     private OnTaskSelectedListener mCallback;
 
     public interface OnTaskSelectedListener {
-        void onTaskSelectedListener(Task t);
+        void onTaskSelectedListener(View v, Task t);
     }
 
 
 
     TaskAdapter(List<Task> taskList, OnTaskSelectedListener callback) {
         this.taskList = taskList;
-        this.mCallback = ( OnTaskSelectedListener ) callback;
+        this.mCallback = callback;
     }
 
     @Override
@@ -46,7 +46,7 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
         holder.vCard.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                mCallback.onTaskSelectedListener( t );
+                mCallback.onTaskSelectedListener( v, t );
             }
         });
         holder.vTitle.setText(t.title);

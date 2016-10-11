@@ -1,13 +1,12 @@
 package com.whospablo.lstr;
 
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -60,7 +59,8 @@ public class MainActivity
     }
 
     @Override
-    public void onTaskSelectedListener(Task t) {
-        Log.d("ONTASKSELECTEDLISTENER", t.title + " selected");
+    public void onTaskSelectedListener(View v, Task t) {
+        Snackbar.make(v, t.title + " selected", Snackbar.LENGTH_SHORT)
+                .setAction("Action", null).show();
     }
 }
