@@ -7,9 +7,15 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity
+        extends AppCompatActivity
+        implements TaskAdapter.OnTaskSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,5 +40,27 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
+
+        TaskAdapter ta = new TaskAdapter(createList(30), this);
+        recList.setAdapter(ta);
+    }
+
+    private List<Task> createList(int size) {
+        List<Task> result = new ArrayList<>();
+        for (int i=1; i <= size; i++) {
+            Task t = new Task();
+            t.title = "Task"+ i;
+            t.summary = "This is some really long summary text that should lead to an ellipsis";
+            t.finished = false;
+            result.add(t);
+
+        }
+
+        return result;
+    }
+
+    @Override
+    public void onTaskSelectedListener(Task t) {
+        Log.d("ONTASKSELECTEDLISTENER", t.title + " selected");
     }
 }
