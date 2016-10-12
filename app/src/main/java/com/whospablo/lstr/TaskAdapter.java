@@ -40,12 +40,12 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(TaskViewHolder holder, final int position) {
+    public void onBindViewHolder(TaskViewHolder holder, int position) {
         final Task t = mTaskList.get(position);
         holder.vCard.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                mCallback.onTaskSelectedListener( v, t );
+                mCallback.onTaskSelectedListener( v, t);
             }
         });
         holder.vTitle.setText(t.getTitle());
@@ -64,15 +64,18 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
         return mTaskList.size();
     }
 
-    public void addItem(Task t){
-        mTaskList.add(t);
-        notifyItemInserted(mTaskList.indexOf(t));
+    public void addItem(int position, Task t){
+        mTaskList.add(position, t);
+    }
+
+    public void editItem(Task t){
+        int position = mTaskList.indexOf(t);
+        mTaskList.set(position, t);
     }
 
     public void removeItem(Task t){
         int position = mTaskList.indexOf(t);
         mTaskList.remove(position);
-        notifyItemRemoved(position);
     }
 
 

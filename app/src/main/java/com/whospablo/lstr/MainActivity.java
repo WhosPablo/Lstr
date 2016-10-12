@@ -1,8 +1,11 @@
 package com.whospablo.lstr;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +19,17 @@ public class MainActivity
     private TaskDAO mTaskDAO;
     private TaskAdapter mAdapter;
 
+    public static final int EDIT_TASK_REQUEST_CODE = 20;
+    public static final int DELETE_TASK_RESULT_CODE = 444;
+
+    public static final String TASK = "task";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -29,12 +37,9 @@ public class MainActivity
             @Override
             public void onClick(View view) {
                 Task t = mTaskDAO.createTask("","",false);
-                t.setTitle("Task "+t.getId());
-                t.setSummary("This is some really long summary text that should lead to an ellipsis");
-                Snackbar.make(view, t.getTitle(), Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
-                mTaskDAO.saveTask(t);
-                mAdapter.addItem(t);
+                mAdapter.addItem(0, t);
+                mAdapter.notifyDataSetChanged();
+                editTask(view, t);
             }
         });
 
@@ -56,11 +61,7 @@ public class MainActivity
 
     @Override
     public void onTaskSelectedListener(View v, Task t) {
-        Snackbar.make(v, t.getTitle() + " removed", Snackbar.LENGTH_SHORT)
-                .setAction("Action", null).show();
-        mTaskDAO.deleteTask(t);
-        mAdapter.removeItem(t);
-
+        editTask(v, t);
     }
 
     @Override
@@ -73,5 +74,42 @@ public class MainActivity
     protected void onPause() {
         mTaskDAO.close();
         super.onPause();
+    }
+
+    public void editTask( View v, Task t ){
+        Intent intent = new Intent(this, EditTaskActivity.class);
+        intent.putExtra("task", t);
+
+        ActivityOptionsCompat options =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        this,
+                        v,
+                        getString(R.string.transition_card) );
+
+        ActivityCompat.startActivityForResult(this, intent, EDIT_TASK_REQUEST_CODE, options.toBundle());
+    }
+
+    public void deleteTask(Task t){
+        mTaskDAO.deleteTask(t);
+        mAdapter.removeItem(t);
+        mAdapter.notifyDataSetChanged();
+        Snackbar.make(findViewById(R.id.fab), t.getTitle() + " removed", Snackbar.LENGTH_SHORT)
+                .setAction("Action", null).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mTaskDAO.open();
+        // REQUEST_CODE is defined above
+        if (resultCode == RESULT_OK && requestCode == EDIT_TASK_REQUEST_CODE) {
+            Task t = (Task) data.getSerializableExtra(TASK);
+            mAdapter.editItem(t);
+            mAdapter.notifyDataSetChanged();
+            mTaskDAO.saveTask(t);
+
+        } else if( resultCode == DELETE_TASK_RESULT_CODE && requestCode == EDIT_TASK_REQUEST_CODE) {
+            Task t = (Task) data.getSerializableExtra(TASK);
+            deleteTask(t);
+        }
     }
 }

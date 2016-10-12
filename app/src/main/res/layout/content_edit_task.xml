@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/content_edit_task"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.whospablo.lstr.EditTaskActivity"
+    tools:showIn="@layout/activity_edit_task"
+    android:background="?attr/colorBackgroundFloating"
+    android:transitionName="@string/transition_card">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:text=""
+        android:ems="14"
+        android:textStyle="normal|bold"
+        android:id="@+id/title_edit_text"
+        android:hint="@string/title"
+        android:background="@android:color/transparent" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:text=""
+        android:ems="10"
+        android:textStyle="normal"
+        android:id="@+id/summary_edit_text"
+        android:hint="@string/summary"
+        android:background="@android:color/transparent"/>
+
+    <CheckBox
+        android:text="@string/finished"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/finished_checkBox" />
+
+</LinearLayout>

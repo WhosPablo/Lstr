@@ -27,9 +27,16 @@ class TaskDAO {
 
     TaskDAO(Context context) { dbHelper = new TaskDBHelper( context ); }
 
-    void open(){ database = dbHelper.getWritableDatabase(); }
+    void open(){
+        if(database == null) {
+            database = dbHelper.getWritableDatabase();
+        }
+    }
 
-    void close(){ dbHelper.close(); }
+    void close(){
+        dbHelper.close();
+        database = null;
+    }
 
     Task createTask(String title, String summary, boolean finished){
         ContentValues values = new ContentValues();
