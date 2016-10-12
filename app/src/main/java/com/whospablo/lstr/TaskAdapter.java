@@ -17,18 +17,17 @@ import java.util.List;
 
 class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
 
-    private List<Task> taskList;
+    private List<Task> mTaskList;
     private OnTaskSelectedListener mCallback;
 
-    public interface OnTaskSelectedListener {
+    interface OnTaskSelectedListener {
         void onTaskSelectedListener(View v, Task t);
     }
 
-
-
     TaskAdapter(List<Task> taskList, OnTaskSelectedListener callback) {
-        this.taskList = taskList;
+        this.mTaskList = taskList;
         this.mCallback = callback;
+
     }
 
     @Override
@@ -41,17 +40,17 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(TaskViewHolder holder, int position) {
-        final Task t = taskList.get(position);
+    public void onBindViewHolder(TaskViewHolder holder, final int position) {
+        final Task t = mTaskList.get(position);
         holder.vCard.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 mCallback.onTaskSelectedListener( v, t );
             }
         });
-        holder.vTitle.setText(t.title);
-        holder.vSummary.setText(t.summary);
-        holder.vFinished.setChecked(t.finished);
+        holder.vTitle.setText(t.getTitle());
+        holder.vSummary.setText(t.getSummary());
+        holder.vFinished.setChecked(t.getFinished());
         holder.vFinished.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -62,7 +61,18 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
 
     @Override
     public int getItemCount() {
-        return taskList.size();
+        return mTaskList.size();
+    }
+
+    public void addItem(Task t){
+        mTaskList.add(t);
+        notifyItemInserted(mTaskList.indexOf(t));
+    }
+
+    public void removeItem(Task t){
+        int position = mTaskList.indexOf(t);
+        mTaskList.remove(position);
+        notifyItemRemoved(position);
     }
 
 

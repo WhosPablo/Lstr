@@ -9,12 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity
         extends AppCompatActivity
         implements TaskAdapter.OnTaskSelectedListener {
+
+    private TaskDAO mTaskDAO;
+    private TaskAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +28,13 @@ public class MainActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Task t = mTaskDAO.createTask("","",false);
+                t.setTitle("Task "+t.getId());
+                t.setSummary("This is some really long summary text that should lead to an ellipsis");
+                Snackbar.make(view, t.getTitle(), Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
+                mTaskDAO.saveTask(t);
+                mAdapter.addItem(t);
             }
         });
 
@@ -40,27 +45,33 @@ public class MainActivity
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
 
-        TaskAdapter ta = new TaskAdapter(createList(30), this);
-        recList.setAdapter(ta);
-    }
+        mTaskDAO = new TaskDAO(this);
+        mTaskDAO.open();
 
-    private List<Task> createList(int size) {
-        List<Task> result = new ArrayList<>();
-        for (int i=1; i <= size; i++) {
-            Task t = new Task();
-            t.title = "Task"+ i;
-            t.summary = "This is some really long summary text that should lead to an ellipsis";
-            t.finished = false;
-            result.add(t);
+        mAdapter = new TaskAdapter(mTaskDAO.getAllTasks(),  this);
+        recList.setAdapter(mAdapter);
 
-        }
 
-        return result;
     }
 
     @Override
     public void onTaskSelectedListener(View v, Task t) {
-        Snackbar.make(v, t.title + " selected", Snackbar.LENGTH_SHORT)
+        Snackbar.make(v, t.getTitle() + " removed", Snackbar.LENGTH_SHORT)
                 .setAction("Action", null).show();
+        mTaskDAO.deleteTask(t);
+        mAdapter.removeItem(t);
+
+    }
+
+    @Override
+    protected void onResume() {
+        mTaskDAO.open();
+        super.onPostResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mTaskDAO.close();
+        super.onPause();
     }
 }
