@@ -27,7 +27,7 @@ The following **optional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-[Imgur](http://i.imgur.com/7RaMQbv.gifv)
+![Imgur](http://i.imgur.com/7RaMQbv.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
