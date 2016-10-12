@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -18,13 +17,14 @@ import java.util.List;
 class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
 
     private List<Task> mTaskList;
-    private OnTaskSelectedListener mCallback;
+    private TaskCardListener mCallback;
 
-    interface OnTaskSelectedListener {
+    interface TaskCardListener {
         void onTaskSelectedListener(View v, Task t);
+        void onTaskCheckBoxClicked(Task t, boolean isChecked );
     }
 
-    TaskAdapter(List<Task> taskList, OnTaskSelectedListener callback) {
+    TaskAdapter(List<Task> taskList, TaskCardListener callback) {
         this.mTaskList = taskList;
         this.mCallback = callback;
 
@@ -51,10 +51,11 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
         holder.vTitle.setText(t.getTitle());
         holder.vSummary.setText(t.getSummary());
         holder.vFinished.setChecked(t.getFinished());
-        holder.vFinished.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        holder.vFinished.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+            public void onClick(View v) {
+                boolean isChecked = ((CheckBox) v).isChecked();
+                mCallback.onTaskCheckBoxClicked(t, isChecked);
             }
         });
     }
@@ -64,16 +65,16 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder>{
         return mTaskList.size();
     }
 
-    public void addItem(int position, Task t){
+    void addItem(int position, Task t){
         mTaskList.add(position, t);
     }
 
-    public void editItem(Task t){
+    void editItem(Task t){
         int position = mTaskList.indexOf(t);
         mTaskList.set(position, t);
     }
 
-    public void removeItem(Task t){
+    void removeItem(Task t){
         int position = mTaskList.indexOf(t);
         mTaskList.remove(position);
     }

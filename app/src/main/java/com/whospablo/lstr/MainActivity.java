@@ -14,7 +14,7 @@ import android.view.View;
 
 public class MainActivity
         extends AppCompatActivity
-        implements TaskAdapter.OnTaskSelectedListener {
+        implements TaskAdapter.TaskCardListener {
 
     private TaskDAO mTaskDAO;
     private TaskAdapter mAdapter;
@@ -39,7 +39,7 @@ public class MainActivity
                 Task t = mTaskDAO.createTask("","",false);
                 mAdapter.addItem(0, t);
                 mAdapter.notifyDataSetChanged();
-                editTask(view, t);
+                fireEditTaskActivity(view, t);
             }
         });
 
@@ -61,7 +61,17 @@ public class MainActivity
 
     @Override
     public void onTaskSelectedListener(View v, Task t) {
-        editTask(v, t);
+        fireEditTaskActivity(v, t);
+    }
+
+    @Override
+    public void onTaskCheckBoxClicked(Task t, boolean isChecked) {
+        if( t.getFinished() != isChecked ){
+            t.setFinished(isChecked);
+            mTaskDAO.saveTask(t);
+            mAdapter.editItem(t);
+        }
+
     }
 
     @Override
@@ -72,11 +82,11 @@ public class MainActivity
 
     @Override
     protected void onPause() {
-        mTaskDAO.close();
         super.onPause();
+        mTaskDAO.close();
     }
 
-    public void editTask( View v, Task t ){
+    public void fireEditTaskActivity(View v, Task t ){
         Intent intent = new Intent(this, EditTaskActivity.class);
         intent.putExtra("task", t);
 

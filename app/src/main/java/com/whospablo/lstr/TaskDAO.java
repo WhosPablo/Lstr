@@ -9,6 +9,8 @@ import com.whospablo.lstr.db.TaskDBHelper;
 import com.whospablo.lstr.db.TaskTable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by pablo_arango on 10/11/16.
@@ -28,14 +30,11 @@ class TaskDAO {
     TaskDAO(Context context) { dbHelper = new TaskDBHelper( context ); }
 
     void open(){
-        if(database == null) {
-            database = dbHelper.getWritableDatabase();
-        }
+        database = dbHelper.getWritableDatabase();
     }
 
     void close(){
         dbHelper.close();
-        database = null;
     }
 
     Task createTask(String title, String summary, boolean finished){
@@ -86,6 +85,15 @@ class TaskDAO {
             cursor.moveToNext();
         }
         cursor.close();
+
+        Collections.sort(tasks, new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                long x = o2.getId();
+                long y = o1.getId();
+                return (x < y) ? -1 : ((x == y) ? 0 : 1);
+            }
+        });
 
         return tasks;
     }
